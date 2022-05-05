@@ -11,7 +11,8 @@ data "aws_caller_identity" "current" {}
 locals {
   k8s_service_account_name      = "eks-svc-account"
   k8s_service_account_namespace = "default"
-  eks_oidc_issuer               = "${data.aws_eks_cluster.cluster.identity[0].oidc[0].issuer}/"
+  eks_oidc_issuer               = trimprefix(data.aws_eks_cluster.cluster.identity[0].oidc[0].issuer, "https://")
+  ekd_oidc_issuer_url           = "${data.aws_eks_cluster.cluster.identity[0].oidc[0].issuer}/"
 }
 
 resource "aws_iam_role" "eks_dev_role" {
@@ -41,7 +42,6 @@ data "aws_iam_policy_document" "eks_dev_iam_policy_document" {
 
 resource "aws_iam_policy" "eks_dev_iam_policy" {
   name   = "eks_dev_iam_policy"
-  path   = "/"
   policy = data.aws_iam_policy_document.eks_dev_iam_policy_document.json
 }
 
@@ -83,11 +83,11 @@ data "aws_iam_policy_document" "eks_dev_assume_role" {
 resource "aws_iam_openid_connect_provider" "eks-cluster" {
   client_id_list  = ["sts.amazonaws.com"]
   thumbprint_list = [data.tls_certificate.cluster.certificates.0.sha1_fingerprint]
-  url             = local.eks_oidc_issuer
+  url             = local.ekd_oidc_issuer_url
 }
 
 data "tls_certificate" "cluster" {
-  url = local.eks_oidc_issuer
+  url = local.ekd_oidc_issuer_url
 }
 
 # Instance Profile for Karpenter - Start
@@ -119,24 +119,24 @@ resource "kubernetes_service_account" "eks_dev_svc" {
 #
 # Deploy Kubernetes Pod with the Service Account that can assume an AWS IAM role
 #
-resource "kubernetes_pod" "iam_role_test" {
-  metadata {
-    name      = "iam-role-test"
-    namespace = local.k8s_service_account_namespace
-  }
+# resource "kubernetes_pod" "iam_role_test" {
+#   metadata {
+#     name      = "iam-role-test"
+#     namespace = local.k8s_service_account_namespace
+#   }
 
-  spec {
-    service_account_name = local.k8s_service_account_name
-    container {
-      name  = "iam-role-test"
-      image = "amazon/aws-cli:latest"
-      # Sleep so that the container stays alive
-      # #continuous-sleeping
-      command = ["/bin/bash", "-c", "--"]
-      args    = ["while true; do sleep 5; done;"]
-    }
-  }
-}
+#   spec {
+#     service_account_name = local.k8s_service_account_name
+#     container {
+#       name  = "iam-role-test"
+#       image = "amazon/aws-cli:latest"
+#       # Sleep so that the container stays alive
+#       # #continuous-sleeping
+#       command = ["/bin/bash", "-c", "--"]
+#       args    = ["while true; do sleep 5; done;"]
+#     }
+#   }
+# }
 
 provider "kubernetes" {
   host                   = data.aws_eks_cluster.cluster.endpoint
