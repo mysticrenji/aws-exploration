@@ -19,6 +19,38 @@ resource "aws_iam_role" "eks_dev_role" {
   assume_role_policy = data.aws_iam_policy_document.eks_dev_assume_role.json
 }
 
+data "aws_iam_policy_document" "eks_dev_iam_policy_document" {
+  statement {
+    sid = "1"
+
+    actions = [
+      "secretsmanager:DescribeSecret",
+      "secretsmanager:GetSecretValue",
+      "ssm:DescribeParameters",
+      "ssm:GetParameter",
+      "ssm:GetParameters",
+      "ssm:GetParametersByPath"
+    ]
+
+    effect = "Allow"
+    resources = [
+      "*",
+    ]
+  }
+}
+
+resource "aws_iam_policy" "eks_dev_iam_policy" {
+  name   = "eks_dev_iam_policy"
+  path   = "/"
+  policy = data.aws_iam_policy_document.eks_dev_iam_policy_document.json
+}
+
+resource "aws_iam_role_policy_attachment" "eks_dev_iam_policy_attachment" {
+  role       = aws_iam_role.eks_dev_role.name
+  policy_arn = aws_iam_policy.eks_dev_iam_policy.arn
+}
+
+
 data "aws_iam_policy_document" "eks_dev_assume_role" {
   statement {
     actions = ["sts:AssumeRoleWithWebIdentity"]
