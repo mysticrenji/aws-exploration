@@ -58,7 +58,7 @@ data "tls_certificate" "cluster" {
   url = local.eks_oidc_issuer
 }
 
-# Instance Profile for Karpenter
+# Instance Profile for Karpenter - Start
 data "aws_iam_policy" "ssm_managed_instance" {
   arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
@@ -70,6 +70,7 @@ resource "aws_iam_instance_profile" "karpenter" {
   name = "KarpenterNodeInstanceProfile-${var.cluster_name}"
   role = module.eks-cluster.worker_iam_role_name
 }
+# Instance Profile for Karpenter - end
 
 resource "kubernetes_service_account" "eks_dev_svc" {
   metadata {
