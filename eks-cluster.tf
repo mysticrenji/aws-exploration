@@ -90,20 +90,6 @@ data "tls_certificate" "cluster" {
   url = local.ekd_oidc_issuer_url
 }
 
-# Instance Profile for Karpenter - Start
-data "aws_iam_policy" "ssm_managed_instance" {
-  arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
-}
-resource "aws_iam_role_policy_attachment" "karpenter_ssm_policy" {
-  role       = module.eks-cluster.worker_iam_role_name
-  policy_arn = data.aws_iam_policy.ssm_managed_instance.arn
-}
-resource "aws_iam_instance_profile" "karpenter" {
-  name = "KarpenterNodeInstanceProfile-${var.cluster_name}"
-  role = module.eks-cluster.worker_iam_role_name
-}
-# Instance Profile for Karpenter - end
-
 resource "kubernetes_service_account" "eks_dev_svc" {
   metadata {
     name      = local.k8s_service_account_name
@@ -116,27 +102,6 @@ resource "kubernetes_service_account" "eks_dev_svc" {
   }
 }
 
-#
-# Deploy Kubernetes Pod with the Service Account that can assume an AWS IAM role
-#
-# resource "kubernetes_pod" "iam_role_test" {
-#   metadata {
-#     name      = "iam-role-test"
-#     namespace = local.k8s_service_account_namespace
-#   }
-
-#   spec {
-#     service_account_name = local.k8s_service_account_name
-#     container {
-#       name  = "iam-role-test"
-#       image = "amazon/aws-cli:latest"
-#       # Sleep so that the container stays alive
-#       # #continuous-sleeping
-#       command = ["/bin/bash", "-c", "--"]
-#       args    = ["while true; do sleep 5; done;"]
-#     }
-#   }
-# }
 
 provider "kubernetes" {
   host                   = data.aws_eks_cluster.cluster.endpoint
@@ -168,3 +133,16 @@ module "eks-cluster" {
   }
 }
 
+# Instance Profile for Karpenter - Start
+data "aws_iam_policy" "ssm_managed_instance" {
+  arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+resource "aws_iam_role_policy_attachment" "karpenter_ssm_policy" {
+  role       = module.eks-cluster.worker_iam_role_name
+  policy_arn = data.aws_iam_policy.ssm_managed_instance.arn
+}
+resource "aws_iam_instance_profile" "karpenter" {
+  name = "KarpenterNodeInstanceProfile-${var.cluster_name}"
+  role = module.eks-cluster.worker_iam_role_name
+}
+# Instance Profile for Karpenter - end
