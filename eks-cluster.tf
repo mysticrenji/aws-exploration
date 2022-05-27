@@ -39,22 +39,20 @@ data "aws_iam_policy_document" "eks_dev_iam_policy_document" {
     ]
   }
 
+
   statement {
-    sid    = "2"
+    sid    = "3"
     effect = "Allow"
 
     actions = [
-      "logs:List*",
-      "logs:Get*",
-      "logs:FilterLogEvents",
-      "logs:Describe*",
-      "cloudwatch:List*",
-      "cloudwatch:Get*",
-      "cloudwatch:Describe*"
+		 "logs:CreateLogStream",
+			"logs:CreateLogGroup",
+			"logs:DescribeLogStreams",
+			"logs:PutLogEvents",
     ]
 
     resources = [
-      "arn:aws:logs:*:*:log-group:/aws/eks/*",
+      "*",
     ]
   }
 }

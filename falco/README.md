@@ -48,3 +48,4 @@ helm install falco --set falco.jsonOutput=true  --set auditLog.enabled=true falc
 3. https://falco.org/blog/choosing-a-driver/
 4. https://github.com/sysdiglabs/ekscloudwatch
 5. https://faun.pub/analyze-aws-eks-audit-logs-with-falco-95202167f2e
+6. https://sotoiwa.hatenablog.com/entry/2021/03/09/141019
