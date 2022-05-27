@@ -38,7 +38,27 @@ data "aws_iam_policy_document" "eks_dev_iam_policy_document" {
       "*",
     ]
   }
+
+  statement {
+    sid    = "2"
+    effect = "Allow"
+
+    actions = [
+      "logs:List*",
+      "logs:Get*",
+      "logs:FilterLogEvents",
+      "logs:Describe*",
+      "cloudwatch:List*",
+      "cloudwatch:Get*",
+      "cloudwatch:Describe*"
+    ]
+
+    resources = [
+      "arn:aws:logs:*:*:log-group:/aws/eks/*",
+    ]
+  }
 }
+
 
 resource "aws_iam_policy" "eks_dev_iam_policy" {
   name   = "eks_dev_iam_policy"
