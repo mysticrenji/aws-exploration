@@ -18,6 +18,10 @@ locals {
 resource "aws_iam_role" "eks_dev_role" {
   name               = "eks_dev_role"
   assume_role_policy = data.aws_iam_policy_document.eks_dev_assume_role.json
+  inline_policy {
+    name   = "aws-cloud-services-policy"
+    policy = data.aws_iam_policy_document.eks_dev_iam_policy_document.json
+  }
 }
 
 data "aws_iam_policy_document" "eks_dev_iam_policy_document" {
@@ -45,28 +49,28 @@ data "aws_iam_policy_document" "eks_dev_iam_policy_document" {
     effect = "Allow"
 
     actions = [
-		 "logs:CreateLogStream",
-			"logs:CreateLogGroup",
-			"logs:DescribeLogStreams",
-			"logs:PutLogEvents",
+      "logs:CreateLogStream",
+      "logs:CreateLogGroup",
+      "logs:DescribeLogStreams",
+      "logs:PutLogEvents",
     ]
 
     resources = [
-      "*",
+      "arn:aws:logs:*:*:*",
     ]
   }
 }
 
 
-resource "aws_iam_policy" "eks_dev_iam_policy" {
-  name   = "eks_dev_iam_policy"
-  policy = data.aws_iam_policy_document.eks_dev_iam_policy_document.json
-}
+# resource "aws_iam_policy" "eks_dev_iam_policy" {
+#   name   = "eks_dev_iam_policy"
+#   policy = data.aws_iam_policy_document.eks_dev_iam_policy_document.json
+# }
 
-resource "aws_iam_role_policy_attachment" "eks_dev_iam_policy_attachment" {
-  role       = aws_iam_role.eks_dev_role.name
-  policy_arn = aws_iam_policy.eks_dev_iam_policy.arn
-}
+# resource "aws_iam_role_policy_attachment" "eks_dev_iam_policy_attachment" {
+#   role       = aws_iam_role.eks_dev_role.name
+#   policy_arn = aws_iam_policy.eks_dev_iam_policy.arn
+# }
 
 
 data "aws_iam_policy_document" "eks_dev_assume_role" {
@@ -96,6 +100,7 @@ data "aws_iam_policy_document" "eks_dev_assume_role" {
       ]
     }
   }
+
 }
 
 resource "aws_iam_openid_connect_provider" "eks-cluster" {
@@ -146,21 +151,21 @@ module "eks-cluster" {
     }
   ]
 
-  tags = {
-    "karpenter.sh/discovery" = var.cluster_name
-  }
+  # tags = {
+  #   "karpenter.sh/discovery" = var.cluster_name
+  # }
 }
 
 # Instance Profile for Karpenter - Start
-data "aws_iam_policy" "ssm_managed_instance" {
-  arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
-}
-resource "aws_iam_role_policy_attachment" "karpenter_ssm_policy" {
-  role       = module.eks-cluster.worker_iam_role_name
-  policy_arn = data.aws_iam_policy.ssm_managed_instance.arn
-}
-resource "aws_iam_instance_profile" "karpenter" {
-  name = "KarpenterNodeInstanceProfile-${var.cluster_name}"
-  role = module.eks-cluster.worker_iam_role_name
-}
+# data "aws_iam_policy" "ssm_managed_instance" {
+#   arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+# }
+# resource "aws_iam_role_policy_attachment" "karpenter_ssm_policy" {
+#   role       = module.eks-cluster.worker_iam_role_name
+#   policy_arn = data.aws_iam_policy.ssm_managed_instance.arn
+# }
+# resource "aws_iam_instance_profile" "karpenter" {
+#   name = "KarpenterNodeInstanceProfile-${var.cluster_name}"
+#   role = module.eks-cluster.worker_iam_role_name
+# }
 # Instance Profile for Karpenter - end
