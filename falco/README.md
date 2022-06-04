@@ -40,7 +40,24 @@ helm repo add falcosecurity https://falcosecurity.github.io/charts
 helm repo update
 helm install falco --set falco.jsonOutput=true  --set auditLog.enabled=true falcosecurity/falco
 ```
+## 3. Export Falco reports to Policy reporter
+```
+helm repo add falcosecurity https://falcosecurity.github.io/charts
+helm repo update
 
+// Install CRD for policy reporter 
+kubectl create -f https://github.com/kubernetes-sigs/wg-policy-prototypes/raw/master/policy-report/crd/v1alpha2/wgpolicyk8s.io_clusterpolicyreports.yaml
+kubectl create -f https://github.com/kubernetes-sigs/wg-policy-prototypes/raw/master/policy-report/crd/v1alpha2/wgpolicyk8s.io_policyreports.yaml
+
+// Install falco, falcosidekick exporter enabled
+ helm install falco falcosecurity/falco \
+ --set falcosidekick.enabled=true \
+ --set falcosidekick.policyreport.enabled=true  \
+ --set falcosidekick.policyreport.kubeconfig=~/.kube/config \
+ --set falcosidekick.policyreport.failthreshold=3 \
+ --set falcosidekick.policyreport.maxevents=10 
+
+```
 
 ## References
 1. https://falco.org/docs/getting-started/installation/
@@ -49,3 +66,5 @@ helm install falco --set falco.jsonOutput=true  --set auditLog.enabled=true falc
 4. https://github.com/sysdiglabs/ekscloudwatch
 5. https://faun.pub/analyze-aws-eks-audit-logs-with-falco-95202167f2e
 6. https://sotoiwa.hatenablog.com/entry/2021/03/09/141019
+7. https://github.com/falcosecurity/falcosidekick
+8. https://github.com/kubernetes-sigs/wg-policy-prototypes/tree/master/policy-report/falco-adapter
