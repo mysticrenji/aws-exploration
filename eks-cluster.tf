@@ -139,14 +139,14 @@ module "eks-cluster" {
   source          = "terraform-aws-modules/eks/aws"
   version         = "<18"
   cluster_name    = var.cluster_name
-  cluster_version = "1.21"
+  cluster_version = "1.22"
   subnets         = module.vpc.private_subnets
   vpc_id          = module.vpc.vpc_id
   enable_irsa     = true
 
   worker_groups = [
     {
-      instance_type = "t2.medium"
+      instance_type = "t3.small"
       asg_max_size  = 1
     }
   ]
