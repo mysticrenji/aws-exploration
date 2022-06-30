@@ -56,7 +56,7 @@ module "eks" {
   tags = {
     Name = "${var.eks_cluster_name}"
   }
-  # Extend node-to-node security group rules
+  # # Extend node-to-node security group rules
   node_security_group_additional_rules = {
     ingress_self_all = {
       description = "Node to node all ports/protocols"

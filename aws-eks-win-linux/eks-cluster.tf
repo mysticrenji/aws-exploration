@@ -53,7 +53,7 @@ module "cluster" {
   region              = var.region
   eks_cluster_name    = var.eks_cluster_name
   eks_cluster_version = var.eks_cluster_version
-  private_subnet_ids  = ["subnet-0f36d57df4ca61531","subnet-07b49b92dbf426f72"]
+  private_subnet_ids  =  ["subnet-09d5e94b812926a74","subnet-07e4003bd32756617"]
   vpc_id              = module.vpc.vpc_id
   lin_desired_size    = var.lin_desired_size
   lin_max_size        = var.lin_max_size
