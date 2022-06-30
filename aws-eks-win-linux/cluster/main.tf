@@ -11,8 +11,8 @@ data "aws_caller_identity" "current" {}
 locals {
   account_id = data.aws_caller_identity.current.account_id
 }
-#### Nodegroups - Images
 
+#### Nodegroups - Images
 data "aws_ami" "lin_ami" {
   most_recent = true
   owners      = ["amazon"]
