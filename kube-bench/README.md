@@ -16,7 +16,7 @@ helm install policy-reporter policy-reporter/policy-reporter --set kyvernoPlugin
 kubectl port-forward service/policy-reporter-ui 8082:8080 -n policy-reporter
 ```
 
-## 3.Installation of Policy Report CRDs - Mannual way
+## 3.Installation of Policy Report CRDs - Manual way
 
 Add the PolicyReport CRDs to your cluster (v1alpha2):
 
