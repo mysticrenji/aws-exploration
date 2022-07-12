@@ -31,7 +31,7 @@ helm repo add gitlab https://charts.gitlab.io
 helm repo update
 cd /aws-eks-win-linux/tools/Gitlab
 kubectl create -f secret.yaml
-helm install --namespace gitlab gitlab-runner -f gitlab-runner-values.yaml gitlab/gitlab-runner
+helm install gitlab-runner -f values.yaml gitlab/gitlab-runner
 ```
 
 ## References
