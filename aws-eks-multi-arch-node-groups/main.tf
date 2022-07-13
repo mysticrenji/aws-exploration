@@ -30,8 +30,8 @@ resource "aws_eks_node_group" "node-ec2" {
   subnet_ids      = flatten(module.aws_vpc.private_subnets_id)
 
   scaling_config {
-    desired_size = try(each.value.scaling_config.desired_size, 2)
-    max_size     = try(each.value.scaling_config.max_size, 3)
+    desired_size = try(each.value.scaling_config.desired_size, 1)
+    max_size     = try(each.value.scaling_config.max_size, 1)
     min_size     = try(each.value.scaling_config.min_size, 1)
   }
 
@@ -63,4 +63,26 @@ resource "aws_iam_openid_connect_provider" "default" {
   url             = "https://${local.oidc}"
   client_id_list  = ["sts.amazonaws.com"]
   thumbprint_list = ["9e99a48a9960b14926bb7f3b02e22da2b0ab7280"]
+}
+
+### Apply changes to aws_auth
+### Windows node Cluster enablement:  https://docs.aws.amazon.com/eks/latest/userguide/windows-support.html
+resource "null_resource" "apply" {
+  triggers = {
+    kubeconfig = base64encode(local.kubeconfig)
+    cmd_patch  = <<-EOT
+      kubectl create configmap aws-auth -n kube-system --kubeconfig <(echo $KUBECONFIG | base64 --decode)
+      kubectl get configmap aws-auth -n kube-system -o yaml > yaml-templates/aws_auth.yaml
+      kubectl patch configmap/aws-auth --patch "`cat yaml-templates/aws_auth.yaml`" -n kube-system --kubeconfig <(echo $KUBECONFIG | base64 --decode)
+      kubectl get cm aws-auth -n kube-system -o json --kubeconfig <(echo $KUBECONFIG | base64 --decode) | jq --arg add "`cat yaml-templates/additional_roles_aws_auth.yaml`" '.data.mapRoles += $add' | kubectl apply --kubeconfig <(echo $KUBECONFIG | base64 --decode) -f -
+      kubectl apply --kubeconfig <(echo $KUBECONFIG | base64 --decode) -f yaml-templates/vpc-resource-controller-configmap.yaml
+    EOT
+  }
+  provisioner "local-exec" {
+    interpreter = ["/bin/bash", "-c"]
+    environment = {
+      KUBECONFIG = self.triggers.kubeconfig
+    }
+    command = self.triggers.cmd_patch
+  }
 }
