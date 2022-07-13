@@ -1,0 +1,30 @@
+gitlabUrl: https://gitlab.com/
+runnerRegistrationToken: ""
+envVars:
+  - name: GitLab
+    value: test-kubernetes
+concurrent: 2
+checkInterval: 0
+rbac:
+  create: true
+  clusterWideAccess: true
+runners:
+  image: alpine:latest
+  tags: "kubernetes,privileged,dind"
+  runUntagged: true
+  privileged: true
+  namespace: default
+  # builds:
+  #   cpuRequests: 100m
+  #   memoryRequests: 128Mi
+  # services:
+  #   cpuRequests: 100m
+  #   memoryRequests: 128Mi
+  # helpers:
+  #   cpuRequests: 100m
+  #   memoryRequests: 128Mi
+  nodeSelector:
+     kubernetes.io/arch : arm64
+  env:
+    DOCKER_TLS_CERTDIR: ""
+
