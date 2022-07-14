@@ -1,0 +1,40 @@
+name: "Runner-Windows"
+gitlabUrl: http://gitlab.com/
+runnerRegistrationToken: thetoken
+# certsSecretName: certname
+log-level: info
+tags: "windows"
+# envVars:
+# - name: CI_SERVER_TLS_CA_FILE
+#   value: /home/gitlab-runner/.gitlab-runner/certs/mydomain.com.crt
+clusterWideAccess: true
+serviceAccountName: default
+rbac:
+  create: true
+  rules:
+    - resources: ["pods", "secrets"]
+      verbs: ["get", "list", "watch", "create", "patch", "delete"]
+    - apiGroups: [""]
+      resources: ["pods/exec", "configmaps", "pods/attach", "secrets"]
+      verbs: ["create", "patch", "delete", "update"]
+nodeSelector:
+  kubernetes.io/os: "linux"
+runners:
+  config: |
+    [[runners]]
+      shell = "pwsh"
+      executor = "kubernetes"
+      [runners.feature_flags]
+        FF_USE_POWERSHELL_PATH_RESOLVER = true
+      [runners.kubernetes]
+        image = "mcr.microsoft.com/powershell:lts-windowsservercore-1809"
+        namespace = "gitlab"
+        poll_timeout = 3600
+        [runners.kubernetes.node_selector]
+          "kubernetes.io/arch" = "amd64"
+          "kubernetes.io/os" = "windows"
+          "node.kubernetes.io/windows-build" = "10.0.17763"
+  nodeSelector:
+    kubernetes.io/os: "windows"
+    node.kubernetes.io/windows-build: "10.0.17763"
+    kubernetes.io/arch: "amd64"
