@@ -1,12 +1,9 @@
 name: "Runner-Windows"
-gitlabUrl: http://gitlab.com/
-runnerRegistrationToken: thetoken
-# certsSecretName: certname
+gitlabUrl: https://gitlab.com/
 log-level: info
 tags: "windows"
-# envVars:
-# - name: CI_SERVER_TLS_CA_FILE
-#   value: /home/gitlab-runner/.gitlab-runner/certs/mydomain.com.crt
+runnerRegistrationToken: 
+runUntagged: false
 clusterWideAccess: true
 serviceAccountName: default
 rbac:
@@ -27,8 +24,9 @@ runners:
       [runners.feature_flags]
         FF_USE_POWERSHELL_PATH_RESOLVER = true
       [runners.kubernetes]
+        tags = "windows"
         image = "mcr.microsoft.com/powershell:lts-windowsservercore-1809"
-        namespace = "gitlab"
+        namespace = "default"
         poll_timeout = 3600
         [runners.kubernetes.node_selector]
           "kubernetes.io/arch" = "amd64"
