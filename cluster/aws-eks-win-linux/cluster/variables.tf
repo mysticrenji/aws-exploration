@@ -56,7 +56,22 @@ variable "node_host_key_name" {
   type        = string
 }
 
-
+variable "lin_instance_type_arm64" {
+  description = "Please enter the instance type to be used for the Linux worker nodes"
+  type        = string
+}
+variable "lin_min_size_arm64" {
+  description = "Please enter the minimal size for the Linux ASG"
+  type        = string
+}
+variable "lin_max_size_arm64" {
+  description = "Please enter the maximal size for the Linux ASG"
+  type        = string
+}
+variable "lin_desired_size_arm64" {
+  description = "Please enter the desired size for the Linux ASG"
+  type        = string
+}
 
 
 
