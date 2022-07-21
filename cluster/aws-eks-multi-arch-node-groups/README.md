@@ -4,5 +4,10 @@ The repo has been forked from https://github.com/erozedguy/Terraform-EKS-Cluster
 
 ## Update kubeconfig for eks cluster
 ```
-aws eks --region us-west-2 update-kubeconfig --name eks-cluster
+aws eks --region eu-central-1 update-kubeconfig --name eks-cluster
+```
+
+## eksctl windows node provisioning
+```
+https://eksctl.io/usage/windows-worker-nodes/
 ```
