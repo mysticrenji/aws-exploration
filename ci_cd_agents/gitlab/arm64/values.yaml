@@ -22,7 +22,7 @@ runners:
       executor = "kubernetes"
       [runners.kubernetes]
         tags = "arm64"
-        image =  "mcr.microsoft.com/dotnet/sdk:6.0:latest"
+        image =  "arm64v8/alpine"
         namespace = "default"
         poll_timeout = 3600
         [runners.kubernetes.node_selector]
