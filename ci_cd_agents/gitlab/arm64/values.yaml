@@ -1,30 +1,33 @@
+name: "Runner-Windows"
 gitlabUrl: https://gitlab.com/
-runnerRegistrationToken: ""
-envVars:
-  - name: GitLab
-    value: test-kubernetes
-concurrent: 2
-checkInterval: 0
+log-level: info
+tags: "arm64"
+runnerRegistrationToken: GR1348941RKqfnSdxdp9gRqHsdpz6
+runUntagged: false
+clusterWideAccess: true
+serviceAccountName: default
 rbac:
   create: true
-  clusterWideAccess: true
+  rules:
+    - resources: ["pods", "secrets"]
+      verbs: ["get", "list", "watch", "create", "patch", "delete"]
+    - apiGroups: [""]
+      resources: ["pods/exec", "configmaps", "pods/attach", "secrets"]
+      verbs: ["create", "patch", "delete", "update"]
+nodeSelector:
+  kubernetes.io/os: "linux"
 runners:
-  image: alpine:latest
-  tags: "kubernetes,privileged,dind"
-  runUntagged: true
-  privileged: true
-  namespace: default
-  # builds:
-  #   cpuRequests: 100m
-  #   memoryRequests: 128Mi
-  # services:
-  #   cpuRequests: 100m
-  #   memoryRequests: 128Mi
-  # helpers:
-  #   cpuRequests: 100m
-  #   memoryRequests: 128Mi
+  config: |
+    [[runners]]
+      executor = "kubernetes"
+      [runners.kubernetes]
+        tags = "arm64"
+        image =  "mcr.microsoft.com/dotnet/sdk:6.0:latest"
+        namespace = "default"
+        poll_timeout = 3600
+        [runners.kubernetes.node_selector]
+          "kubernetes.io/arch" = "arm64"
+          "kubernetes.io/os" = "linux"
   nodeSelector:
-     kubernetes.io/arch : arm64
-  env:
-    DOCKER_TLS_CERTDIR: ""
-
+    kubernetes.io/os: "linux"
+    kubernetes.io/arch: "arm64"
