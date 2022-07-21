@@ -2,7 +2,7 @@ name: "Runner-Windows"
 gitlabUrl: https://gitlab.com/
 log-level: info
 tags: "windows"
-runnerRegistrationToken: 
+runnerRegistrationToken: GR1348941RKqfnSdxdp9gRqHsdpz6
 runUntagged: false
 clusterWideAccess: true
 serviceAccountName: default
