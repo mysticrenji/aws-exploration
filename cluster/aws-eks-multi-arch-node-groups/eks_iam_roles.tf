@@ -21,6 +21,11 @@ resource "aws_iam_role_policy_attachment" "AmazonEKSClusterPolicy" {
   role       = aws_iam_role.EKSClusterRole.name
 }
 
+resource "aws_iam_role_policy_attachment" "AmazonEKSVPCResourceController" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSVPCResourceController"
+  role       = aws_iam_role.EKSClusterRole.name
+}
+
 # NODE GROUP ROLE
 resource "aws_iam_role" "NodeGroupRole" {
   name = "EKSNodeGroupRole"
