@@ -9,17 +9,16 @@ resource "aws_eks_cluster" "eks-cluster" {
   name     = var.cluster_config.name
   role_arn = aws_iam_role.EKSClusterRole.arn
   version  = var.cluster_config.version
-
   vpc_config {
     subnet_ids         = flatten([module.aws_vpc.public_subnets_id, module.aws_vpc.private_subnets_id])
     security_group_ids = flatten(module.aws_vpc.security_groups_id)
+    endpoint_public_access = false
   }
-
   depends_on = [
     aws_iam_role_policy_attachment.AmazonEKSClusterPolicy
   ]
-
 }
+
 
 # NODE GROUP
 resource "aws_eks_node_group" "node-ec2" {
