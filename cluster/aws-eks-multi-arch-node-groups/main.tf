@@ -18,8 +18,10 @@ resource "aws_eks_cluster" "eks-cluster" {
   depends_on = [
     aws_iam_role_policy_attachment.AmazonEKSClusterPolicy
   ]
-
+  # [Shisho]: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_cluster#enabled_cluster_log_types
+  enabled_cluster_log_types = ["api", "authenticator", "audit", "scheduler", "controllerManager"]
 }
+
 
 # NODE GROUP
 resource "aws_eks_node_group" "node-ec2" {
