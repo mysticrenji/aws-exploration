@@ -60,6 +60,14 @@ variable "security_groups" {
         cidr_blocks      = ["0.0.0.0/0"]
         ipv6_cidr_blocks = null
       },
+      {
+        description      = "Allow Az Arc Agent"
+        protocol         = "tcp"
+        from_port        = 9418
+        to_port          = 9418
+        cidr_blocks      = ["0.0.0.0/0"]
+        ipv6_cidr_blocks = null
+      },
     ]
     egress = [
       {
