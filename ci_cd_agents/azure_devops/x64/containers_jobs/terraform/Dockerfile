@@ -1,4 +1,4 @@
-FROM node:18-bullseye-slim
+FROM node:22-bullseye-slim
 LABEL org.opencontainers.image.source https://github.com/mysticrenji/aws-exploration
 RUN apt update && apt install -y curl jq wget unzip ca-certificates gnupg lsb-release apt-transport-https python3 python3-pip
 
