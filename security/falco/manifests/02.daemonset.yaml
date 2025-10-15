@@ -16,7 +16,7 @@ spec:
       serviceAccountName: eks-svc-account
       containers:
       - name: aws-for-fluent-bit
-        image: amazon/aws-for-fluent-bit:2.34.1
+        image: amazon/aws-for-fluent-bit:3.0.0
         volumeMounts:
         - name: varlog
           mountPath: /var/log
