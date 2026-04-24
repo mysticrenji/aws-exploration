@@ -1,5 +1,5 @@
 ARG NODE_VERSION=16
-FROM ubuntu:20.04
+FROM ubuntu:26.04
 RUN DEBIAN_FRONTEND=noninteractive apt-get update
 RUN DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
 
