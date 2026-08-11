@@ -1,4 +1,4 @@
-FROM node:6.1.0-wheezy 
+FROM node:6.14.2-wheezy 
 
 RUN mkdir /usr/src/goof
 COPY . /usr/src/goof
